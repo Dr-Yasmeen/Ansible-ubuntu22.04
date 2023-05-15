@@ -1,0 +1,130 @@
+server/master$ mkdir playbooks
+cd playbooks
+ls
+ubuntu@ip-172-31-30-226:~/playbook$ vim create_file.yml
+---
+- name: This playbook create a file
+  hosts: all
+  become: true
+  tasks:
+  - name: Create a playbook
+    file:
+      path: /home/ubuntu/yasmeen.txt
+      state: touch
+      :wq
+      
+ubuntu@ip-172-31-30-226:~/playbook$ ansible-playbook create_file.yml -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key
+==================output=================================
+The authenticity of host '35.172.190.198 (35.172.190.198)' can't be established.
+ED25519 key fingerprint is SHA256:dpE3TweqOq6AxZURgVGeAhRivu28g51SZJRC13FwmHc.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? ok: [server2]
+ok: [server1]
+yes
+ok: [server3]
+
+TASK [Create a playbook] *****************************************************************************************************************************
+changed: [server2]
+changed: [server1]
+changed: [server3]
+
+PLAY RECAP *******************************************************************************************************************************************
+server1                    : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+server2                    : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+server3                    : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+======================================================================================================================
+check on nodes
+pwd
+ls
+file names will created
+check
+
+create user by playbook
+ubuntu@ip-172-31-30-226:~/playbook$ vim user_file.yml
+ubuntu@ip-172-31-30-226:~/playbook$ ansible-playbook user_file.yml -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key
+
+PLAY [This playbook create a file] *******************************************************************************************************************
+
+TASK [Gathering Facts] *******************************************************************************************************************************
+ok: [server1]
+ok: [server2]
+ok: [server3]
+
+TASK [Create a playbook user] ************************************************************************************************************************
+changed: [server1]
+changed: [server2]
+changed: [server3]
+
+PLAY RECAP *******************************************************************************************************************************************
+server1                    : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+server2                    : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+server3                    : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+================================================================
+check on nodes
+ubuntu@ip-172-31-16-118:~$ cat /etc/passwd   #last ur username will display on nodes
+
+
+playbook=3 create dockers with ansible
+
+-
+ name: this will install based on os
+ hosts: servers
+ become: yes
+ tasks:
+   - name: install Docker
+     apt:
+       name: docker.io
+       state: latest
+   - name: install aws cli
+     apt:
+       name: awscli
+       state: latest
+     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+     
+     
+     playbook4 install Nginix
+     
+---
+- name: This playbook will install nginx
+ hosts: servers
+ become: yes
+ tasks:
+   - name: install nginx
+     apt: 
+       name: nginx
+       state: latest
+   - name: start nginx
+     service:
+       name: nginx
+       state: started
+       enabled: yes
+       
+       play book 5   playbooks/deploy_webpage.yml
+       - 
+ name: this is a  simple html project
+ hosts: servers
+ become: yes
+ tasks:
+   - name: Install nginx
+     apt:
+       name: nginx
+       state: latest
+
+   - name: Start nginx
+     service:
+       name: nginx
+       state: started
+
+   - name: Deploy webpage
+     copy: 
+       src: index.html
+       dest: /var/www/html 
+       
+       
+playbooks/date.yml
+-
+ name: Date playbook
+ hosts: servers
+ tasks:
+   - name: this will show the date
+     command: date
